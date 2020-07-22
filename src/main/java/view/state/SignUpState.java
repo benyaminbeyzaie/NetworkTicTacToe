@@ -71,11 +71,6 @@ public class SignUpState extends State implements StatePage {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, super.getWidth()/2, super.getHeight());
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2.drawImage(Assets.TicTacTaoLogo, super.getWidth() / 4 - Assets.TicTacTaoLogo.getWidth() / 2,
-                super.getHeight() / 2 - Assets.TicTacTaoLogo.getHeight() / 2, null);
+        drawLoginStateBackground(g);
     }
 }
