@@ -7,6 +7,8 @@ import view.constants.Fonts;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LoginState extends State implements StatePage{
 
@@ -49,6 +51,12 @@ public class LoginState extends State implements StatePage{
         exitButton.setBounds(3 * super.getConfig().getWidth() / 4 + 95 + 10 - 200 + 95, 320, 95, 30);
         exitButton.setBackground(Color.RED);
         exitButton.setBorder(null);
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
 
 
