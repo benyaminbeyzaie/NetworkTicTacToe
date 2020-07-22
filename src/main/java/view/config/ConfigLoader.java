@@ -13,11 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class ConfigLoader {
-    private ConfigLoader configLoader;
+    private static ConfigLoader configLoader;
 
     private ConfigLoader(){}
 
-    public ConfigLoader getInstance(){
+    public static ConfigLoader getInstance(){
         if (configLoader == null) configLoader = new ConfigLoader();
         return configLoader;
     }
