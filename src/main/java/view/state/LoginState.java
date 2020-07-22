@@ -4,6 +4,7 @@ package view.state;
 import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
+import view.display.StateManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +13,8 @@ import java.awt.event.ActionListener;
 
 public class LoginState extends State implements StatePage{
 
-    public LoginState(ClientConfig config){
-        super(config);
+    public LoginState(ClientConfig config, StateManager stateManager){
+        super(config, stateManager);
         setLayout(null);
 
         // Login label
@@ -37,6 +38,12 @@ public class LoginState extends State implements StatePage{
         loginButton.setBounds(3 * super.getConfig().getWidth() / 4 - 105, 280, 200, 30);
         loginButton.setBackground(Color.ORANGE);
         loginButton.setBorder(null);
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // login request
+            }
+        });
 
         //Sign up button
         JButton signUpButton = new JButton();
@@ -44,6 +51,13 @@ public class LoginState extends State implements StatePage{
         signUpButton.setBounds(3 * super.getConfig().getWidth() / 4 - 200 + 95, 320, 95, 30);
         signUpButton.setBackground(Color.GREEN);
         signUpButton.setBorder(null);
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // set content page to sign up state
+                stateManager.setCurrentState(stateManager.getStateHandler().getSignUpState());
+            }
+        });
 
         //Exit button
         JButton exitButton = new JButton();
@@ -57,7 +71,6 @@ public class LoginState extends State implements StatePage{
                 System.exit(0);
             }
         });
-
 
 
         add(loginLabel);
