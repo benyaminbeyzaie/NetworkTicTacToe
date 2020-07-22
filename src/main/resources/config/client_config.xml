@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setting>
+    <ip>localhost</ip>
+    <port>9090</port>
+    <title>Tic Tac Tao</title>
+    <window_size>
+        <width>500</width>
+        <height>600</height>
+    </window_size>
+</setting>
