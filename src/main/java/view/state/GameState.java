@@ -1,5 +1,7 @@
 package view.state;
 
+import model.game.Game;
+import model.player.Player;
 import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
@@ -9,8 +11,14 @@ import view.utils.OnBoardButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class GameState extends State implements StatePage{
+    private Game game;
+    private Player signedPlayer;
+    private ArrayList<JButton> buttons;
     public GameState(ClientConfig clientConfig, StateManager stateManager) {
         super(clientConfig, stateManager);
         setLayout(null);
@@ -36,15 +44,39 @@ public class GameState extends State implements StatePage{
     }
 
     private void addGamePanelButtons() {
+        buttons = new ArrayList<>();
         for (int i = 0; i < 49; i++){
             OnBoardButton button = new OnBoardButton(i / 7 + 15 + (i / 7 * (5 + Numbers.ON_BOARD_BUTTON_SIZE)), i % 7 + 100 + (Numbers.ON_BOARD_BUTTON_SIZE + 5) * (i % 7));
             //button.setIcon(new ImageIcon(Assets.redStar));
+            int finalI = i;
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    game.putANut(signedPlayer, finalI);
+                    revalidate();
+                }
+            });
+            buttons.add(button);
             add(button);
         }
     }
 
     @Override
     public void render(Graphics g) {
+        for (int i = 0; i < 49; i++) {
+            if (game.getBoard()[i] == 1){
+                buttons.get(i).setIcon(new ImageIcon(Assets.redStar));
+            }else if (game.getBoard()[i] == 2){
+                buttons.get(i).setIcon(new ImageIcon(Assets.blackCircle));
+            }
+        }
+    }
 
+    public Player getSignedPlayer() {
+        return signedPlayer;
+    }
+
+    public void setSignedPlayer(Player signedPlayer) {
+        this.signedPlayer = signedPlayer;
     }
 }
