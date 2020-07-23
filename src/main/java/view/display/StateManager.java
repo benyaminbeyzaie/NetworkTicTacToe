@@ -1,14 +1,14 @@
 package view.display;
 
 import view.state.State;
-import view.state.StateHandler;
+import view.state.StateContainer;
 
 public class StateManager {
     private  Display display;
-    private StateHandler stateHandler;
-    public StateManager(Display display, StateHandler stateHandler){
+    private StateContainer stateContainer;
+    public StateManager(Display display, StateContainer stateContainer){
         this.display = display;
-        this.stateHandler = stateHandler;
+        this.stateContainer = stateContainer;
     }
 
     public void setCurrentState(State currentState){
@@ -16,11 +16,11 @@ public class StateManager {
         display.revalidate();
     }
 
-    public StateHandler getStateHandler() {
-        return stateHandler;
+    public StateContainer getStateContainer() {
+        return stateContainer;
     }
 
-    public void setStateHandler(StateHandler stateHandler) {
-        this.stateHandler = stateHandler;
+    public void setStateContainer(StateContainer stateContainer) {
+        this.stateContainer = stateContainer;
     }
 }
