@@ -1,5 +1,6 @@
 package view.state;
 
+import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.constants.Numbers;
@@ -37,6 +38,7 @@ public class GameState extends State implements StatePage{
     private void addGamePanelButtons() {
         for (int i = 0; i < 49; i++){
             OnBoardButton button = new OnBoardButton(i / 7 + 15 + (i / 7 * (5 + Numbers.ON_BOARD_BUTTON_SIZE)), i % 7 + 100 + (Numbers.ON_BOARD_BUTTON_SIZE + 5) * (i % 7));
+            //button.setIcon(new ImageIcon(Assets.redStar));
             add(button);
         }
     }
