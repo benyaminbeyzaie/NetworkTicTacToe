@@ -1,7 +1,6 @@
 package view.state;
 
 
-import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -55,7 +54,7 @@ public class LoginState extends State implements StatePage{
             @Override
             public void actionPerformed(ActionEvent e) {
                 // set content page to sign up state
-                stateManager.setCurrentState(stateManager.getStateHandler().getSignUpState());
+                stateManager.setCurrentState(stateManager.getStateContainer().getSignUpState());
             }
         });
 
