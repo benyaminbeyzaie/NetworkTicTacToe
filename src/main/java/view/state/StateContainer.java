@@ -2,7 +2,7 @@ package view.state;
 
 import model.game.Game;
 
-public class StateHandler {
+public class StateContainer {
     private GameState gameState;
     private  LoginState loginState;
     private MenuState menuState;
