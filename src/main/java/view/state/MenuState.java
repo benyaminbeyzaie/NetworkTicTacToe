@@ -19,6 +19,19 @@ public class MenuState extends State implements StatePage {
         usernameLabel.setFont(Fonts.BIG_FONT);
         usernameLabel.setBounds(15, 10, 300 , 40);
 
+        JTextArea textArea = new JTextArea(100, 1);
+
+        // set Top players string
+        for (int i = 0; i < 1000; i++) {
+            textArea.append("hello\n");
+        }
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        scrollPane.setBounds(330, 100, 150, 400);
+        add(scrollPane);
+
+
         JButton backButton = new JButton();
         backButton.setBorder(null);
         backButton.setText("BACK");
