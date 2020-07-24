@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import network.request.Request;
 import network.request.SignUpRequest;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -25,26 +26,29 @@ public class ClientHandler extends Thread {
         super.run();
             try {
                 Scanner scanner = new Scanner(socket.getInputStream());
+                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 String requestString = null;
                 while (!isInterrupted()){
                     System.out.println("waiting fo request...");
                     requestString = scanner.nextLine();
-                    System.out.println(requestString);
-                    executeRequest(requestString);
+
+                    dataOutputStream.writeInt(executeRequest(requestString));
+                    dataOutputStream.flush();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
     }
 
-    private void executeRequest(String jsonRequest) throws IOException {
+    private int executeRequest(String jsonRequest) throws IOException {
         System.out.println("executing request...");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         SignUpRequest request = objectMapper.readValue(jsonRequest, SignUpRequest.class);
         if (request.getType().equals("SignUp")){
             SignUpRequest signUpRequest = objectMapper.readValue(jsonRequest, SignUpRequest.class);
-            server.signUpPlayer(signUpRequest);
+            return server.signUpPlayer(signUpRequest);
         }
+        return 0;
     }
 }
