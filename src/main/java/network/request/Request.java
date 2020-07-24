@@ -1,8 +1,12 @@
 package network.request;
 
-public abstract class Request {
+public class Request {
     private String type;
-    public abstract String toString();
+
+    public Request(){}
+    public Request(String type) {
+        this.type = type;
+    }
 
     public String getType() {
         return type;
@@ -10,5 +14,12 @@ public abstract class Request {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"type\" : " + type +
+                '}';
     }
 }
