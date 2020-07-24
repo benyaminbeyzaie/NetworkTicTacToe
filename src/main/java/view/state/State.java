@@ -1,5 +1,6 @@
 package view.state;
 
+import network.client.Client;
 import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
 import view.display.StateManager;
@@ -10,10 +11,12 @@ import java.awt.*;
 public abstract class State extends JPanel {
     private ClientConfig config;
     StateManager stateManager;
+    private Client client;
 
-    State(ClientConfig clientConfig, StateManager stateManager){
+    State(ClientConfig clientConfig, StateManager stateManager, Client client){
         this.config = clientConfig;
         this.stateManager = stateManager;
+        this.client = client;
     }
 
     public ClientConfig getConfig() {
