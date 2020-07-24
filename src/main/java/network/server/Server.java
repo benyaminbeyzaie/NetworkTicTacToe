@@ -9,6 +9,7 @@ import network.client.Client;
 import network.request.SignUpRequest;
 import view.config.configmodels.ServerConfig;
 import view.constants.Numbers;
+import view.constants.Path;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -32,6 +33,7 @@ public class Server extends Thread{
         port = config.getPort();
         ip = config.getIp();
         serverSocket = new ServerSocket(config.getPort());
+        clientHandlers = new ArrayList<>();
     }
 
 
@@ -65,8 +67,7 @@ public class Server extends Thread{
         if (signUpRequest.getPassword() == null || signUpRequest.getPassword().equals("")) return 1; // pass is empty;
         ObjectMapper objectMapper = new ObjectMapper();
         //check if that file is exist or not!
-        final String PLAYER_FILE_PATH = "src/main/java/model/player/playerjsonfiles";
-        File file = new File(PLAYER_FILE_PATH + signUpRequest.getUsername() + ".json");
+        File file = new File(Path.PLAYER_FILE_PATH + signUpRequest.getUsername() + ".json");
         if (!file.exists()){
             Player player = new Player(signUpRequest.getUsername(), signUpRequest.getPassword());
             player.setDefaults();
