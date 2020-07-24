@@ -9,16 +9,14 @@ import view.display.StateManager;
 import view.state.*;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class Client extends Thread{
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private PrintStream printStream;
     private Display display;
     private boolean isConnectedToTheServer;
 
@@ -29,6 +27,7 @@ public class Client extends Thread{
             socket = new Socket(config.getIp(), config.getPort());
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            printStream = new PrintStream(dataOutputStream);
             isConnectedToTheServer = true;
         } catch (IOException e) {
             System.out.println("Unable to connect to the address: " + config.getIp() + ":" + config.getPort());
@@ -37,7 +36,9 @@ public class Client extends Thread{
     }
 
     public void sendRequest(Request request) throws IOException {
-        dataOutputStream.writeBytes(request.toString());
+//        printStream.println(request.toString());
+//        printStream.flush();
+        dataOutputStream.writeBytes(request + "\n");
         dataOutputStream.flush();
     }
 
@@ -66,6 +67,10 @@ public class Client extends Thread{
 
     @Override
     public void run() {
-        super.run();
+        //super.run();
+    }
+
+    public Display getDisplay() {
+        return display;
     }
 }
