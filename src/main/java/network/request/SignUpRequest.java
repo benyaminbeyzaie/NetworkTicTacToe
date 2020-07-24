@@ -4,7 +4,11 @@ public class SignUpRequest extends Request {
     private String username;
     private String password;
 
-    public SignUpRequest(String username, String password) {
+    public SignUpRequest(){
+        super();
+    }
+    public SignUpRequest(String type, String username, String password) {
+        super(type);
         this.username = username;
         this.password = password;
         setType("SignUp");
@@ -29,8 +33,9 @@ public class SignUpRequest extends Request {
     @Override
     public String toString() {
         return "{" +
-                "username : " + username + '\'' +
-                ", password : " + password + '\'' +
+                "\"type\" : " + "\"" + getType()+ "\"" +
+                ", \"username\" : " + "\"" +  username + "\""  +
+                ", \"password\" : " + "\"" + password + "\"" +
                 '}';
     }
 }
