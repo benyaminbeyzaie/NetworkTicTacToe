@@ -35,11 +35,16 @@ public class Client extends Thread{
         }
     }
 
-    public void sendRequest(Request request) throws IOException {
+    public int sendRequest(Request request) throws IOException {
 //        printStream.println(request.toString());
 //        printStream.flush();
         dataOutputStream.writeBytes(request + "\n");
         dataOutputStream.flush();
+        return getResponse();
+    }
+
+    private int getResponse() throws IOException {
+        return dataInputStream.readInt();
     }
 
     private void initializeStates(ClientConfig config) {
