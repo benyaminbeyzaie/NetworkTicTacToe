@@ -11,7 +11,7 @@ import java.awt.*;
 public abstract class State extends JPanel {
     private ClientConfig config;
     StateManager stateManager;
-    private Client client;
+    Client client;
 
     State(ClientConfig clientConfig, StateManager stateManager, Client client){
         this.config = clientConfig;
