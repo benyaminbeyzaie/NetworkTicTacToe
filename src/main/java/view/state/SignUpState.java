@@ -1,5 +1,7 @@
 package view.state;
 
+import network.client.Client;
+import network.request.SignUpRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -8,10 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class SignUpState extends State implements StatePage {
-    public SignUpState(ClientConfig clientConfig, StateManager stateManager) {
-        super(clientConfig, stateManager);
+    public SignUpState(ClientConfig clientConfig, StateManager stateManager, Client client) {
+        super(clientConfig, stateManager, client);
         setLayout(null);
         // Login label
         JLabel loginLabel = new JLabel("Sign up");
@@ -37,7 +40,13 @@ public class SignUpState extends State implements StatePage {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // login request
+                // sign up request
+                SignUpRequest signUpRequest = new SignUpRequest(usernameField.getText(), passwordField.getText());
+                try {
+                    client.sendRequest(signUpRequest);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
