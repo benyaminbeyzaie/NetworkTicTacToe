@@ -29,13 +29,13 @@ public class ConfigLoader {
 
     public ServerConfig loadServerConfig(String address) throws FileNotFoundException, XMLStreamException {
         FileInputStream xmlFile = new FileInputStream(address);
-        return (ServerConfig) parseClientConfigXML(xmlFile);
+        return parseServerConfigXML(xmlFile);
     }
 
-    private Config parseClientConfigXML(FileInputStream fileInputStream) throws XMLStreamException {
+    private ClientConfig parseClientConfigXML(FileInputStream fileInputStream) throws XMLStreamException {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(fileInputStream);
-        Config config = new ClientConfig();
+        ClientConfig config = new ClientConfig();
         while (xmlEventReader.hasNext()){
             XMLEvent xmlEvent = xmlEventReader.nextEvent();
             if (xmlEvent.isStartElement()){
@@ -52,15 +52,38 @@ public class ConfigLoader {
                     case "window_size":
                         xmlEventReader.nextTag();
                         xmlEvent = xmlEventReader.nextEvent();
-                        ((ClientConfig)config).setWidth(Integer.parseInt(xmlEvent.asCharacters().getData()));
+                        config.setWidth(Integer.parseInt(xmlEvent.asCharacters().getData()));
                         xmlEventReader.nextTag();
                         xmlEventReader.nextTag();
                         xmlEvent = xmlEventReader.nextEvent();
-                        ((ClientConfig)config).setHeight(Integer.parseInt(xmlEvent.asCharacters().getData()));
+                        config.setHeight(Integer.parseInt(xmlEvent.asCharacters().getData()));
                         break;
                     case "title":
                         xmlEvent = xmlEventReader.nextEvent();
-                        ((ClientConfig)config).setTitle(xmlEvent.asCharacters().getData());
+                        config.setTitle(xmlEvent.asCharacters().getData());
+                        break;
+                }
+            }
+        }
+        return config;
+    }
+
+    private ServerConfig parseServerConfigXML(FileInputStream fileInputStream) throws XMLStreamException {
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(fileInputStream);
+        ServerConfig config = new ServerConfig();
+        while (xmlEventReader.hasNext()){
+            XMLEvent xmlEvent = xmlEventReader.nextEvent();
+            if (xmlEvent.isStartElement()){
+                StartElement startElement = xmlEvent.asStartElement();
+                switch (startElement.getName().getLocalPart()) {
+                    case "ip":
+                        xmlEvent = xmlEventReader.nextEvent();
+                        config.setIp(xmlEvent.asCharacters().getData());
+                        break;
+                    case "port":
+                        xmlEvent = xmlEventReader.nextEvent();
+                        config.setPort(Integer.parseInt(xmlEvent.asCharacters().getData()));
                         break;
                 }
             }
