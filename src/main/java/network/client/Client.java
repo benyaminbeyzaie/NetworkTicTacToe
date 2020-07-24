@@ -1,5 +1,6 @@
 package network.client;
 
+import network.request.Request;
 import view.assets.Assets;
 import view.config.ConfigLoader;
 import view.config.configmodels.ClientConfig;
@@ -35,14 +36,19 @@ public class Client extends Thread{
         }
     }
 
+    public void sendRequest(Request request) throws IOException {
+        dataOutputStream.writeBytes(request.toString());
+        dataOutputStream.flush();
+    }
+
     private void initializeStates(ClientConfig config) {
         StateContainer stateContainer = new StateContainer();
         StateManager stateManager = new StateManager(display, stateContainer);
 
-        LoginState loginState = new LoginState(config, stateManager);
-        SignUpState signUpState = new SignUpState(config, stateManager);
-        GameState gameState = new GameState(config, stateManager);
-        MenuState menuState = new MenuState(config, stateManager);
+        LoginState loginState = new LoginState(config, stateManager, this);
+        SignUpState signUpState = new SignUpState(config, stateManager, this);
+        GameState gameState = new GameState(config, stateManager, this);
+        MenuState menuState = new MenuState(config, stateManager, this);
         stateContainer.setLoginState(loginState);
         stateContainer.setSignUpState(signUpState);
         stateContainer.setGameState(gameState);
