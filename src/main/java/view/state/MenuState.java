@@ -1,5 +1,6 @@
 package view.state;
 
+import network.client.Client;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -10,8 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuState extends State implements StatePage {
-    public MenuState(ClientConfig clientConfig, StateManager stateManager) {
-        super(clientConfig, stateManager);
+    public MenuState(ClientConfig clientConfig, StateManager stateManager, Client client) {
+        super(clientConfig, stateManager,client);
         setLayout(null);
 
         JLabel usernameLabel = new JLabel();

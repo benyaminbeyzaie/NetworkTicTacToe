@@ -2,6 +2,7 @@ package view.state;
 
 import model.game.Game;
 import model.player.Player;
+import network.client.Client;
 import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
@@ -19,8 +20,8 @@ public class GameState extends State implements StatePage{
     private Game game;
     private Player signedPlayer;
     private ArrayList<JButton> buttons;
-    public GameState(ClientConfig clientConfig, StateManager stateManager) {
-        super(clientConfig, stateManager);
+    public GameState(ClientConfig clientConfig, StateManager stateManager, Client client) {
+        super(clientConfig, stateManager, client);
         setLayout(null);
 
         JLabel turnLabel = new JLabel();

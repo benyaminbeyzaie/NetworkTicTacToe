@@ -1,6 +1,7 @@
 package view.state;
 
 
+import network.client.Client;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -12,8 +13,8 @@ import java.awt.event.ActionListener;
 
 public class LoginState extends State implements StatePage{
 
-    public LoginState(ClientConfig config, StateManager stateManager){
-        super(config, stateManager);
+    public LoginState(ClientConfig config, StateManager stateManager, Client client){
+        super(config, stateManager, client);
         setLayout(null);
 
         // Login label
