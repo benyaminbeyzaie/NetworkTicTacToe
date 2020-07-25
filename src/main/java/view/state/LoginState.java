@@ -64,7 +64,11 @@ public class LoginState extends State implements StatePage{
             @Override
             public void actionPerformed(ActionEvent e) {
                 // set content page to sign up state
-                stateManager.setCurrentState(stateManager.getStateContainer().getSignUpState());
+                try {
+                    stateManager.setCurrentState(stateManager.getStateContainer().getSignUpState());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -90,7 +94,7 @@ public class LoginState extends State implements StatePage{
         add(exitButton);
     }
 
-    private void executeResponse(String out) {
+    private void executeResponse(String out) throws IOException {
         String message = "";
         switch (out){
             case "0" : message = "username can not be empty";
