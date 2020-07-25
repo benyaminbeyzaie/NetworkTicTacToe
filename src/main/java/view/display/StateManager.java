@@ -1,7 +1,10 @@
 package view.display;
 
+import view.state.MenuState;
 import view.state.State;
 import view.state.StateContainer;
+
+import java.io.IOException;
 
 public class StateManager {
     private  Display display;
@@ -11,7 +14,8 @@ public class StateManager {
         this.stateContainer = stateContainer;
     }
 
-    public void setCurrentState(State currentState){
+    public void setCurrentState(State currentState) throws IOException {
+        if (currentState instanceof MenuState) ((MenuState) currentState).setSignedPlayerInfo();
         display.setContentPane(currentState);
         display.revalidate();
     }
