@@ -2,7 +2,10 @@ package network.server;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.player.Player;
+import network.request.GetSignedPlayerUsernameRequest;
 import network.request.LoginRequest;
+import network.request.Request;
 import network.request.SignUpRequest;
 
 import java.io.IOException;
@@ -13,6 +16,7 @@ import java.util.Scanner;
 public class ClientHandler extends Thread {
     Socket socket;
     Server server;
+    private Player  signedPlayer;
     private String token = null;
 
     ClientHandler(Server server, Socket socket) throws IOException {
@@ -42,7 +46,8 @@ public class ClientHandler extends Thread {
         System.out.println("executing request...");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        SignUpRequest request = objectMapper.readValue(jsonRequest, SignUpRequest.class);
+        System.out.println(jsonRequest);
+        Request request = objectMapper.readValue(jsonRequest, SignUpRequest.class);
         if (request.getType().equals("SignUp")){
             SignUpRequest signUpRequest = objectMapper.readValue(jsonRequest, SignUpRequest.class);
             return server.signUpPlayer(signUpRequest);
@@ -50,6 +55,12 @@ public class ClientHandler extends Thread {
         if (request.getType().equals("Login")){
             LoginRequest loginRequest = objectMapper.readValue(jsonRequest, LoginRequest.class);
             return server.login(loginRequest, clientHandler);
+        }
+        if (request.getType().equals("GetSignedPlayerUsername")){
+            System.out.println(jsonRequest);
+            GetSignedPlayerUsernameRequest getSignedPlayerUsernameRequest = objectMapper.readValue(jsonRequest, GetSignedPlayerUsernameRequest.class);
+            System.out.println("///");
+            return server.getSignedPlayerUsername(getSignedPlayerUsernameRequest, clientHandler);
         }
         return null;
     }
@@ -60,5 +71,13 @@ public class ClientHandler extends Thread {
 
     public void setToken(String token) throws IOException {
         this.token = token;
+    }
+
+    public Player getSignedPlayer() {
+        return signedPlayer;
+    }
+
+    public void setSignedPlayer(Player signedPlayer) {
+        this.signedPlayer = signedPlayer;
     }
 }
