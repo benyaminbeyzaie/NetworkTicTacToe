@@ -20,6 +20,7 @@ public class Player {
 
     public void setDefaults(){
         score = 0;
+        status = 0; // offline
     }
 
     public String getUsername() {
