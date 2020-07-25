@@ -1,6 +1,7 @@
 package view.state;
 
 import network.client.Client;
+import network.request.GetSignedPlayerUsernameRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -9,18 +10,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class MenuState extends State implements StatePage {
-    public MenuState(ClientConfig clientConfig, StateManager stateManager, Client client) {
+    JLabel usernameLabel;
+    public MenuState(ClientConfig clientConfig, StateManager stateManager, Client client) throws IOException {
         super(clientConfig, stateManager,client);
         setLayout(null);
 
-        JLabel usernameLabel = new JLabel();
-        usernameLabel.setText("USERNAME");
+        usernameLabel = new JLabel();
         usernameLabel.setFont(Fonts.BIG_FONT);
         usernameLabel.setBounds(15, 10, 300 , 40);
 
-        JTextArea textArea = new JTextArea(100, 1);
+        JTextArea textArea = new JTextArea(10, 1);
 
         // set Top players string
         for (int i = 0; i < 1000; i++) {
@@ -56,6 +58,17 @@ public class MenuState extends State implements StatePage {
         logOutButton.setForeground(Color.BLACK);
         logOutButton.setBackground(Color.YELLOW);
         logOutButton.setBounds(35 , 165 , 250 , 50);
+        logOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.setToken(null);
+                try {
+                    stateManager.setCurrentState(stateManager.getStateContainer().getLoginState());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         JButton exitButton = new JButton();
         exitButton.setBorder(null);
@@ -78,7 +91,6 @@ public class MenuState extends State implements StatePage {
 
 
         add(usernameLabel);
-        //add(backButton);
         add(topPlayersLabel);
         add(startNewGameButton);
         add(logOutButton);
@@ -99,5 +111,9 @@ public class MenuState extends State implements StatePage {
         g.fillRect(0 , 60, 500, 2);
         g.fillRect(320, 60, 2, 600);
 
+    }
+
+    public void setSignedPlayerInfo() throws IOException {
+        usernameLabel.setText(client.sendRequest(new GetSignedPlayerUsernameRequest(client.getToken())));
     }
 }
