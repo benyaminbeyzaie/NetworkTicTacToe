@@ -49,7 +49,7 @@ public class ClientHandler extends Thread {
         }
         if (request.getType().equals("Login")){
             LoginRequest loginRequest = objectMapper.readValue(jsonRequest, LoginRequest.class);
-            return server.signInPlayer(loginRequest, clientHandler);
+            return server.login(loginRequest, clientHandler);
         }
         return null;
     }
