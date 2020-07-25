@@ -41,10 +41,9 @@ public class SignUpState extends State implements StatePage {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // sign up request
-                SignUpRequest signUpRequest = new SignUpRequest("SignUp",usernameField.getText(), passwordField.getText());
+                SignUpRequest signUpRequest = new SignUpRequest(usernameField.getText(), passwordField.getText());
                 try {
-                    System.out.println("sign up request is sending...");
-                    int out = client.sendRequest(signUpRequest);
+                    String out = client.sendRequest(signUpRequest);
                     showDialogBox(out);
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -73,16 +72,17 @@ public class SignUpState extends State implements StatePage {
         add(signUpButton);
     }
 
-    private void showDialogBox(int out) {
+    private void showDialogBox(String out) {
         String message = "";
         switch (out){
-            case 0 : message = "username can not be empty";
+            case "0" : message = "username can not be empty";
             break;
-            case 1 : message = "password can not be empty";
+            case "1" : message = "password can not be empty";
             break;
-            case 2 : message = "username is existed";
+            case "2" : message = "username is existed";
             break;
-            case 3 : message = "username created successfully";
+            case "3" : message = "user created successfully!";
+            break;
         }
         JOptionPane.showMessageDialog(client.getDisplay(),
                 message);
