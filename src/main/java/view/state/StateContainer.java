@@ -1,10 +1,8 @@
 package view.state;
 
-import model.game.Game;
-
 public class StateContainer {
     private GameState gameState;
-    private  LoginState loginState;
+    private LoginState loginState;
     private MenuState menuState;
     private SignUpState signUpState;
 
