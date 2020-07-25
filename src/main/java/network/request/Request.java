@@ -1,9 +1,9 @@
 package network.request;
 
-public class Request {
+public abstract class Request {
     private String type;
 
-    public Request(){}
+    public Request() {}
     public Request(String type) {
         this.type = type;
     }
