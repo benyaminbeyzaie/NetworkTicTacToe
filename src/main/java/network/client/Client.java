@@ -21,7 +21,6 @@ public class Client extends Thread{
     private PrintStream printStream;
     private Display display;
     private String token = null;
-    private Player signedPlayer;
     private boolean isConnectedToTheServer;
 
     public Client(ClientConfig config) throws IOException, XMLStreamException {
@@ -56,7 +55,7 @@ public class Client extends Thread{
     }
 
 
-    private void initializeStates(ClientConfig config) {
+    private void initializeStates(ClientConfig config) throws IOException {
         StateContainer stateContainer = new StateContainer();
         StateManager stateManager = new StateManager(display, stateContainer);
 
