@@ -61,7 +61,11 @@ public class SignUpState extends State implements StatePage {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // set content page to sign up state
-                stateManager.setCurrentState(stateManager.getStateContainer().getLoginState());
+                try {
+                    stateManager.setCurrentState(stateManager.getStateContainer().getLoginState());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
