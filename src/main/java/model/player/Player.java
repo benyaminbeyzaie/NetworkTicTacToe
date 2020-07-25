@@ -1,9 +1,16 @@
 package model.player;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import view.constants.Path;
+
+import java.io.File;
+import java.io.IOException;
+
 public class Player {
     private String username;
     private String password;
     private int score;
+    private int status;
 
     public Player(){}
     public Player(String username, String password) {
@@ -37,5 +44,24 @@ public class Player {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean checkPassword(String password) {
+        return password.equals(this.password);
+
+    }
+
+    public void savePlayerInfo() throws IOException {
+        File file = new File(Path.PLAYER_FILE_PATH + this.getUsername() + ".json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, this);
     }
 }
