@@ -4,14 +4,11 @@ public class SignUpRequest extends Request {
     private String username;
     private String password;
 
-    public SignUpRequest(){
-        super();
-    }
+    public SignUpRequest() {}
     public SignUpRequest(String username, String password) {
-        //super(type);
+        super("SignUp");
         this.username = username;
         this.password = password;
-        setType("SignUp");
     }
 
     public String getUsername() {
