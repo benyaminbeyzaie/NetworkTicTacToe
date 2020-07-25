@@ -3,6 +3,7 @@ package network.server;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.player.Player;
+import network.request.GetSignedPlayerUsernameRequest;
 import network.request.LoginRequest;
 import network.request.SignUpRequest;
 import view.config.configmodels.ServerConfig;
@@ -84,6 +85,7 @@ public class Server extends Thread{
             if (player.checkPassword(loginRequest.getPassword())) {
                 String token = TokenCreator.generateNewToken();
                 clientHandler.setToken(token);
+                clientHandler.setSignedPlayer(player);
                 player.savePlayerInfo();
                 return token;
             } else {
@@ -91,6 +93,15 @@ public class Server extends Thread{
             }
         } else {
             return "2";
+        }
+    }
+
+    synchronized String getSignedPlayerUsername(GetSignedPlayerUsernameRequest getSignedPlayerUsernameRequest, ClientHandler clientHandler) throws IOException {
+        System.out.println(clientHandler.getToken());
+        if (getSignedPlayerUsernameRequest.getToken().equals(clientHandler.getToken())){
+            return clientHandler.getSignedPlayer().getUsername();
+        }else {
+            return "error!";
         }
     }
 }
