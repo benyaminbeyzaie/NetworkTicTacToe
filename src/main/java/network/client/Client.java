@@ -1,5 +1,6 @@
 package network.client;
 
+import model.player.Player;
 import network.request.Request;
 import view.assets.Assets;
 import view.config.ConfigLoader;
@@ -11,6 +12,7 @@ import view.state.*;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client extends Thread{
     private Socket socket;
@@ -18,6 +20,8 @@ public class Client extends Thread{
     private DataOutputStream dataOutputStream;
     private PrintStream printStream;
     private Display display;
+    private String token = null;
+    private Player signedPlayer;
     private boolean isConnectedToTheServer;
 
     public Client(ClientConfig config) throws IOException, XMLStreamException {
@@ -35,17 +39,22 @@ public class Client extends Thread{
         }
     }
 
-    public int sendRequest(Request request) throws IOException {
+    public String sendRequest(Request request) throws IOException {
 //        printStream.println(request.toString());
 //        printStream.flush();
         dataOutputStream.writeBytes(request + "\n");
         dataOutputStream.flush();
+        System.out.println("Request: " + request + " is send via out put stream");
         return getResponse();
     }
 
-    private int getResponse() throws IOException {
-        return dataInputStream.readInt();
+    private String getResponse() throws IOException {
+        Scanner scanner = new Scanner(dataInputStream);
+        String read = scanner.nextLine();
+        System.out.println("Response is : " + read);
+        return read;
     }
+
 
     private void initializeStates(ClientConfig config) {
         StateContainer stateContainer = new StateContainer();
@@ -77,5 +86,13 @@ public class Client extends Thread{
 
     public Display getDisplay() {
         return display;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
