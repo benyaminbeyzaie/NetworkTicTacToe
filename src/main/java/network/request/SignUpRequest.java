@@ -7,8 +7,8 @@ public class SignUpRequest extends Request {
     public SignUpRequest(){
         super();
     }
-    public SignUpRequest(String type, String username, String password) {
-        super(type);
+    public SignUpRequest(String username, String password) {
+        //super(type);
         this.username = username;
         this.password = password;
         setType("SignUp");
