@@ -1,8 +1,6 @@
 package view.display;
 
 import view.config.configmodels.ClientConfig;
-import view.config.configmodels.Config;
-import view.state.LoginState;
 import view.state.State;
 
 import javax.swing.*;
