@@ -2,6 +2,7 @@ package view.state;
 
 
 import network.client.Client;
+import network.request.LoginRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -10,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class LoginState extends State implements StatePage{
 
@@ -42,6 +44,13 @@ public class LoginState extends State implements StatePage{
             @Override
             public void actionPerformed(ActionEvent e) {
                 // login request
+                LoginRequest loginRequest = new LoginRequest(usernameField.getText(), passwordField.getText());
+                try {
+                    String out = client.sendRequest(loginRequest);
+                    executeResponse(out);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -79,6 +88,25 @@ public class LoginState extends State implements StatePage{
         add(loginButton);
         add(signUpButton);
         add(exitButton);
+    }
+
+    private void executeResponse(String out) {
+        String message = "";
+        switch (out){
+            case "0" : message = "username can not be empty";
+                break;
+            case "1" : message = "password can not be empty";
+                break;
+            case "2" : message = "username is not existed";
+                break;
+            case "3" : message = "password is incorrect";
+        }
+        if (out.length() > 5){
+            client.setToken(out);
+            stateManager.setCurrentState(stateManager.getStateContainer().getMenuState());
+        }
+        JOptionPane.showMessageDialog(client.getDisplay(),
+                message);
     }
 
     @Override
