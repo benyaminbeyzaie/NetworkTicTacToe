@@ -108,6 +108,7 @@ public class LoginState extends State implements StatePage{
         if (out.length() > 5){
             client.setToken(out);
             stateManager.setCurrentState(stateManager.getStateContainer().getMenuState());
+            new TopPlayerListUpdater(stateManager.getStateContainer().getMenuState(), client).start();
         }
         JOptionPane.showMessageDialog(client.getDisplay(),
                 message);
