@@ -2,6 +2,7 @@ package view.state;
 
 import network.client.Client;
 import network.request.GetSignedPlayerUsernameRequest;
+import network.request.LogOutRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 public class MenuState extends State implements StatePage {
     JLabel usernameLabel;
+    JTextArea textArea;
     public MenuState(ClientConfig clientConfig, StateManager stateManager, Client client) throws IOException {
         super(clientConfig, stateManager,client);
         setLayout(null);
@@ -22,12 +24,7 @@ public class MenuState extends State implements StatePage {
         usernameLabel.setFont(Fonts.BIG_FONT);
         usernameLabel.setBounds(15, 10, 300 , 40);
 
-        JTextArea textArea = new JTextArea(10, 1);
-
-        // set Top players string
-        for (int i = 0; i < 1000; i++) {
-            textArea.append("hello\n");
-        }
+        textArea = new JTextArea(10, 1);
 
         JScrollPane scrollPane = new JScrollPane(textArea);
 
@@ -61,12 +58,17 @@ public class MenuState extends State implements StatePage {
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                client.setToken(null);
+                try {
+                    client.sendRequest(new LogOutRequest(client.getToken()));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 try {
                     stateManager.setCurrentState(stateManager.getStateContainer().getLoginState());
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+                client.setToken(null);
             }
         });
 
@@ -87,7 +89,7 @@ public class MenuState extends State implements StatePage {
         JLabel topPlayersLabel = new JLabel();
         topPlayersLabel.setText("TOP PLAYERS");
         topPlayersLabel.setFont(Fonts.STANDARD_FONT);
-        topPlayersLabel.setBounds(435 - getFontMetrics(Fonts.STANDARD_FONT).stringWidth(usernameLabel.getText()), 55, 300 , 40);
+        topPlayersLabel.setBounds(350 - getFontMetrics(Fonts.STANDARD_FONT).stringWidth(usernameLabel.getText()), 55, 300 , 40);
 
 
         add(usernameLabel);
@@ -96,6 +98,10 @@ public class MenuState extends State implements StatePage {
         add(logOutButton);
         add(exitButton);
 
+
+    }
+
+    private void setTopPlayersLists() {
 
     }
 
@@ -115,5 +121,9 @@ public class MenuState extends State implements StatePage {
 
     public void setSignedPlayerInfo() throws IOException {
         usernameLabel.setText(client.sendRequest(new GetSignedPlayerUsernameRequest(client.getToken())));
+    }
+
+    public JTextArea getTextArea() {
+        return textArea;
     }
 }
