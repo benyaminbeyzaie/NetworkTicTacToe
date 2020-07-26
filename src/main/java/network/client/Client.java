@@ -38,7 +38,7 @@ public class Client extends Thread{
         }
     }
 
-    public String sendRequest(Request request) throws IOException {
+    public synchronized String sendRequest(Request request) throws IOException {
 //        printStream.println(request.toString());
 //        printStream.flush();
         dataOutputStream.writeBytes(request + "\n");
@@ -47,7 +47,7 @@ public class Client extends Thread{
         return getResponse();
     }
 
-    private String getResponse() throws IOException {
+    private synchronized String getResponse() throws IOException {
         Scanner scanner = new Scanner(dataInputStream);
         String read = scanner.nextLine();
         System.out.println("Response is : " + read);
