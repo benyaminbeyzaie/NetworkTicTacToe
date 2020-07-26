@@ -3,10 +3,7 @@ package network.server;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.player.Player;
-import network.request.GetSignedPlayerUsernameRequest;
-import network.request.LoginRequest;
-import network.request.Request;
-import network.request.SignUpRequest;
+import network.request.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -46,7 +43,6 @@ public class ClientHandler extends Thread {
         System.out.println("executing request...");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        System.out.println(jsonRequest);
         Request request = objectMapper.readValue(jsonRequest, SignUpRequest.class);
         if (request.getType().equals("SignUp")){
             SignUpRequest signUpRequest = objectMapper.readValue(jsonRequest, SignUpRequest.class);
@@ -57,10 +53,16 @@ public class ClientHandler extends Thread {
             return server.login(loginRequest, clientHandler);
         }
         if (request.getType().equals("GetSignedPlayerUsername")){
-            System.out.println(jsonRequest);
             GetSignedPlayerUsernameRequest getSignedPlayerUsernameRequest = objectMapper.readValue(jsonRequest, GetSignedPlayerUsernameRequest.class);
-            System.out.println("///");
             return server.getSignedPlayerUsername(getSignedPlayerUsernameRequest, clientHandler);
+        }
+        if (request.getType().equals("GetAllPlayersNameWithStatus")){
+            GetAllPlayersNameWithStatusRequest getAllPlayersNameWithStatusRequest = objectMapper.readValue(jsonRequest, GetAllPlayersNameWithStatusRequest.class);
+            return server.getAllPlayersNameWithStatus(getAllPlayersNameWithStatusRequest, clientHandler);
+        }
+        if (request.getType().equals("LogOutRequest")){
+            LogOutRequest logOutRequest = objectMapper.readValue(jsonRequest, LogOutRequest.class);
+            return server.logOut(logOutRequest);
         }
         return null;
     }
