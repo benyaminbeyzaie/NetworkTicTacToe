@@ -1,11 +1,10 @@
 package network.server;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.player.Player;
-import network.request.GetSignedPlayerUsernameRequest;
-import network.request.LoginRequest;
-import network.request.SignUpRequest;
+import network.request.*;
 import view.config.configmodels.ServerConfig;
 import view.constants.Numbers;
 import view.constants.Path;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Server extends Thread{
     private int port = Numbers.DEFAULT_PORT;
@@ -22,6 +22,9 @@ public class Server extends Thread{
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> clientHandlers;
     private TokenCreator tokenCreator;
+    private PlayerStatusChecker playerStatusChecker;
+    private ArrayList<Player> allPlayers;
+    private AllPlayerFinder allPlayerFinder;
 
     public Server(ServerConfig config) throws IOException {
         port = config.getPort();
@@ -29,6 +32,9 @@ public class Server extends Thread{
         serverSocket = new ServerSocket(config.getPort());
         clientHandlers = new ArrayList<>();
         tokenCreator = new TokenCreator();
+        allPlayers = new ArrayList<>();
+        allPlayerFinder = new AllPlayerFinder(allPlayers);
+        playerStatusChecker = new PlayerStatusChecker(clientHandlers, allPlayers);
     }
 
 
@@ -37,6 +43,13 @@ public class Server extends Thread{
     public void run() {
         super.run();
         System.out.println("Server started...");
+        allPlayerFinder.start();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        playerStatusChecker.start();
         listenForJoinRequest();
     }
 
@@ -77,16 +90,23 @@ public class Server extends Thread{
     synchronized String login(LoginRequest loginRequest, ClientHandler clientHandler) throws IOException {
         if (loginRequest.getUsername().equals("")) return "0";
         else if (loginRequest.getPassword().equals("")) return "1";
-        File file = new File(Path.PLAYER_FILE_PATH + loginRequest.getUsername() + ".json");
-        if (file.exists()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            Player player = objectMapper.readValue(file, Player.class);
-            if (player.checkPassword(loginRequest.getPassword())) {
+        boolean hasUsername = false;
+        Player playerToSign = null;
+        for (Player player :
+                allPlayers) {
+            if (player.getUsername().equals(loginRequest.getUsername())){
+                hasUsername = true;
+                playerToSign = player;
+                break;
+            }
+        }
+        if (hasUsername) {
+            if (playerToSign.checkPassword(loginRequest.getPassword())) {
                 String token = TokenCreator.generateNewToken();
                 clientHandler.setToken(token);
-                clientHandler.setSignedPlayer(player);
-                player.savePlayerInfo();
+                clientHandler.setSignedPlayer(playerToSign);
+                clientHandler.getSignedPlayer().setStatus(1);
+                playerToSign.savePlayerInfo();
                 return token;
             } else {
                 return "3";
@@ -103,5 +123,35 @@ public class Server extends Thread{
         }else {
             return "error!";
         }
+    }
+
+    synchronized String getAllPlayersNameWithStatus(GetAllPlayersNameWithStatusRequest getAllPlayersNameWithStatusRequest, ClientHandler clientHandler) throws IOException {
+        if (getAllPlayersNameWithStatusRequest.getToken().equals(clientHandler.getToken())){
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (Player player :
+                    allPlayers) {
+                System.out.println(player.getStatus());
+                stringBuilder.append(player.getUsername());
+                stringBuilder.append("/");
+                stringBuilder.append(player.getScore());
+                stringBuilder.append(player.getStatus());
+                stringBuilder.append("-");
+            }
+            return stringBuilder.toString();
+        }else {
+            return "error!";
+        }
+    }
+
+    synchronized String logOut(LogOutRequest logOutRequest) {
+        for (ClientHandler c :
+                clientHandlers) {
+            if (logOutRequest.getToken().equals(c.getToken())) {
+                c.getSignedPlayer().setStatus(0);
+                c.setSignedPlayer(null);
+            }
+        }
+        return "";
     }
 }
