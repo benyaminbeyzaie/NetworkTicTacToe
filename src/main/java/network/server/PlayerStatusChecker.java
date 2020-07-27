@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class PlayerStatusChecker extends Thread {
     private ArrayList<ClientHandler> clientHandlers;
-    private ArrayList<Player> allPlayers;
+    private final ArrayList<Player> allPlayers;
 
     PlayerStatusChecker(ArrayList<ClientHandler> clientHandlers, ArrayList<Player> allPlayers) {
         this.clientHandlers = clientHandlers;

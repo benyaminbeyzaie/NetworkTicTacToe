@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AllPlayerFinder extends Thread {
-    ArrayList<Player> allPlayers;
+    private final ArrayList<Player> allPlayers;
 
     AllPlayerFinder(ArrayList<Player> allPlayers){
         this.allPlayers = allPlayers;
@@ -32,6 +32,7 @@ public class AllPlayerFinder extends Thread {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    assert player != null : "player is null :/";
                     if (!player.isIn(allPlayers)){
                         allPlayers.add(player);
                     }
