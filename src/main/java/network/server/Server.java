@@ -21,7 +21,7 @@ public class Server extends Thread{
     private String ip = "localhost";
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> clientHandlers;
-    private TokenCreator tokenCreator;
+    //private TokenCreator tokenCreator;
     private PlayerStatusChecker playerStatusChecker;
     private ArrayList<Player> allPlayers;
     private AllPlayerFinder allPlayerFinder;
@@ -31,7 +31,7 @@ public class Server extends Thread{
         ip = config.getIp();
         serverSocket = new ServerSocket(config.getPort());
         clientHandlers = new ArrayList<>();
-        tokenCreator = new TokenCreator();
+        //tokenCreator = new TokenCreator();
         allPlayers = new ArrayList<>();
         allPlayerFinder = new AllPlayerFinder(allPlayers);
         playerStatusChecker = new PlayerStatusChecker(clientHandlers, allPlayers);
@@ -102,12 +102,14 @@ public class Server extends Thread{
         }
         if (hasUsername) {
             if (playerToSign.checkPassword(loginRequest.getPassword())) {
-                String token = TokenCreator.generateNewToken();
-                clientHandler.setToken(token);
-                clientHandler.setSignedPlayer(playerToSign);
-                clientHandler.getSignedPlayer().setStatus(1);
-                playerToSign.savePlayerInfo();
-                return token;
+                if (allPlayers.get(allPlayers.indexOf(playerToSign)).getStatus() == 0){
+                    String token = TokenCreator.generateNewToken();
+                    clientHandler.setToken(token);
+                    clientHandler.setSignedPlayer(playerToSign);
+                    clientHandler.getSignedPlayer().setStatus(1);
+                    playerToSign.savePlayerInfo();
+                    return token;
+                }else return "4"; // player is already online!
             } else {
                 return "3";
             }
