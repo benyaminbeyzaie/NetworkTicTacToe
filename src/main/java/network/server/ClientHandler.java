@@ -11,8 +11,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientHandler extends Thread {
-    Socket socket;
-    Server server;
+    private Socket socket;
+    private Server server;
     private Player  signedPlayer;
     private String token = null;
 
@@ -44,6 +44,7 @@ public class ClientHandler extends Thread {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Request request = objectMapper.readValue(jsonRequest, SignUpRequest.class);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         if (request.getType().equals("SignUp")){
             SignUpRequest signUpRequest = objectMapper.readValue(jsonRequest, SignUpRequest.class);
             return server.signUpPlayer(signUpRequest);
