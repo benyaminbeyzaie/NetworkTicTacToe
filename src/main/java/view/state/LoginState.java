@@ -95,7 +95,7 @@ public class LoginState extends State implements StatePage{
     }
 
     private void executeResponse(String out) throws IOException {
-        String message = "";
+        String message = "successful!";
         switch (out){
             case "0" : message = "username can not be empty";
                 break;
@@ -104,6 +104,8 @@ public class LoginState extends State implements StatePage{
             case "2" : message = "username is not existed";
                 break;
             case "3" : message = "password is incorrect";
+                break;
+            case "4" : message = "player is already online";
         }
         if (out.length() > 5){
             client.setToken(out);
