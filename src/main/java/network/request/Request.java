@@ -1,6 +1,6 @@
 package network.request;
 
-public abstract class Request {
+public class Request {
     private String type;
 
     public Request() {}
