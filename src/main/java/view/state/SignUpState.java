@@ -31,7 +31,7 @@ public class SignUpState extends State implements StatePage {
         JTextField passwordField = new JTextField(18);
         passwordField.setBounds(3 * super.getConfig().getWidth() / 4 - 105, 240 ,200, 30);
 
-        //Login button
+        //sign up button
         JButton loginButton = new JButton();
         loginButton.setText("Sign up");
         loginButton.setBounds(3 * super.getConfig().getWidth() / 4 - 105, 280, 200, 30);
@@ -43,15 +43,13 @@ public class SignUpState extends State implements StatePage {
                 // sign up request
                 SignUpRequest signUpRequest = new SignUpRequest(usernameField.getText(), passwordField.getText());
                 try {
-                    String out = client.sendRequest(signUpRequest);
-                    showDialogBox(out);
+                    client.sendRequest(signUpRequest);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         });
 
-        //Sign up button
         JButton signUpButton = new JButton();
         signUpButton.setText("Back");
         signUpButton.setBounds(3 * super.getConfig().getWidth() / 4 - 200 + 95, 320, 95, 30);
@@ -76,8 +74,9 @@ public class SignUpState extends State implements StatePage {
         add(signUpButton);
     }
 
-    private void showDialogBox(String out) {
+    public void showDialogBox(String out) {
         String message = "";
+        System.out.println(out);
         switch (out){
             case "0" : message = "username can not be empty";
             break;
