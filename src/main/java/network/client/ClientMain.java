@@ -4,7 +4,6 @@ import view.config.ConfigLoader;
 import view.config.configmodels.ClientConfig;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ClientMain {
