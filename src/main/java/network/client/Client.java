@@ -1,5 +1,6 @@
 package network.client;
 
+import model.player.Player;
 import network.request.Request;
 import view.assets.Assets;
 import view.config.configmodels.ClientConfig;
@@ -16,7 +17,7 @@ public class Client extends Thread{
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private Display display;
-    private String token = null;
+    private String token;
     private ClientWriter clientWriter;
     private ClientReader clientReader;
     private StateManager stateManager;
