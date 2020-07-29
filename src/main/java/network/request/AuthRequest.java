@@ -1,7 +1,7 @@
 package network.request;
 
 
-public abstract class AuthRequest extends Request {
+public class AuthRequest extends Request {
     String token;
 
     public AuthRequest(String type, String token){
