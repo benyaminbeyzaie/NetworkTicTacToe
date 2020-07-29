@@ -1,9 +1,7 @@
 package network.client;
 
-import model.player.Player;
 import network.request.Request;
 import view.assets.Assets;
-import view.config.ConfigLoader;
 import view.config.configmodels.ClientConfig;
 import view.display.Display;
 import view.display.StateManager;
@@ -12,16 +10,16 @@ import view.state.*;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client extends Thread{
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-    private PrintStream printStream;
     private Display display;
     private String token = null;
-    private boolean isConnectedToTheServer;
+    private ClientWriter clientWriter;
+    private ClientReader clientReader;
+    private StateManager stateManager;
 
     public Client(ClientConfig config) throws IOException, XMLStreamException {
         initializeDisplay(config);
@@ -30,35 +28,20 @@ public class Client extends Thread{
             socket = new Socket(config.getIp(), config.getPort());
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            printStream = new PrintStream(dataOutputStream);
-            isConnectedToTheServer = true;
         } catch (IOException e) {
             System.out.println("Unable to connect to the address: " + config.getIp() + ":" + config.getPort());
-            isConnectedToTheServer = false;
         }
+        clientWriter = new ClientWriter(dataOutputStream);
+        clientReader = new ClientReader(dataInputStream, this);
     }
 
-    public synchronized String sendRequest(Request request) throws IOException {
-//        printStream.println(request.toString());
-//        printStream.flush();
-        dataOutputStream.writeBytes(request + "\n");
-        dataOutputStream.flush();
-        System.out.println("Request: " + request + " is send via out put stream");
-        return getResponse();
+    public void sendRequest(Request request) throws IOException {
+        clientWriter.sendRequest(request);
     }
-
-    private synchronized String getResponse() throws IOException {
-        Scanner scanner = new Scanner(dataInputStream);
-        String read = scanner.nextLine();
-        System.out.println("Response is : " + read);
-        return read;
-    }
-
 
     private void initializeStates(ClientConfig config) throws IOException {
         StateContainer stateContainer = new StateContainer();
-        StateManager stateManager = new StateManager(display, stateContainer);
-
+        stateManager = new StateManager(display, stateContainer);
         LoginState loginState = new LoginState(config, stateManager, this);
         SignUpState signUpState = new SignUpState(config, stateManager, this);
         GameState gameState = new GameState(config, stateManager, this);
@@ -67,20 +50,17 @@ public class Client extends Thread{
         stateContainer.setSignUpState(signUpState);
         stateContainer.setGameState(gameState);
         stateContainer.setMenuState(menuState);
-
         stateManager.setCurrentState(loginState);
     }
 
-    private void initializeDisplay(ClientConfig config) throws FileNotFoundException, XMLStreamException {
+    private void initializeDisplay(ClientConfig config){
         Assets.init();
-        ClientConfig clientConfig = ConfigLoader.getInstance().
-                loadClientConfig("src/main/resources/config/client_config.xml");
-        display = Display.getInstance(clientConfig);
+        display = Display.getInstance(config);
     }
 
     @Override
     public void run() {
-        //super.run();
+        clientReader.start();
     }
 
     public Display getDisplay() {
@@ -93,5 +73,9 @@ public class Client extends Thread{
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public StateManager getStateManager() {
+        return stateManager;
     }
 }
