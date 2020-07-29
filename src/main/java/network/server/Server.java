@@ -52,7 +52,7 @@ public class Server extends Thread{
             while (!isInterrupted()){
                 System.out.println("Listening for join clients...");
                 socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(socket);
+                ClientHandler clientHandler = new ClientHandler(socket, this);
                 clientHandlers.add(clientHandler);
                 clientHandler.start();
                 System.out.println("CLIENT-" + clientHandlers.size() +  " HAS REQUESTED TO JOIN, AND WE HAVE ACCEPTED");
@@ -60,5 +60,9 @@ public class Server extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<Player> getAllPlayers() {
+        return allPlayers;
     }
 }
