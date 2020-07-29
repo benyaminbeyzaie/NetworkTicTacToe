@@ -46,8 +46,7 @@ public class LoginState extends State implements StatePage{
                 // login request
                 LoginRequest loginRequest = new LoginRequest(usernameField.getText(), passwordField.getText());
                 try {
-                    String out = client.sendRequest(loginRequest);
-                    executeResponse(out);
+                    client.sendRequest(loginRequest);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -94,7 +93,7 @@ public class LoginState extends State implements StatePage{
         add(exitButton);
     }
 
-    private void executeResponse(String out) throws IOException {
+    public void showDialogBox(String out) throws IOException {
         String message = "successful!";
         switch (out){
             case "0" : message = "username can not be empty";
@@ -107,13 +106,13 @@ public class LoginState extends State implements StatePage{
                 break;
             case "4" : message = "player is already online";
         }
-        if (out.length() > 5){
+        if (out.length() > 1) {
             client.setToken(out);
-            stateManager.setCurrentState(stateManager.getStateContainer().getMenuState());
-            new TopPlayerListUpdater(stateManager.getStateContainer().getMenuState(), client).start();
+            client.getStateManager().setCurrentState(client.getStateManager().getStateContainer().getMenuState());
+        }else {
+            JOptionPane.showMessageDialog(client.getDisplay(),
+                    message);
         }
-        JOptionPane.showMessageDialog(client.getDisplay(),
-                message);
     }
 
     @Override
