@@ -2,6 +2,8 @@ package view.state;
 
 
 import network.client.Client;
+import network.request.GetAllPlayerRequest;
+import network.request.GetSignedPlayerUsernameRequest;
 import network.request.LoginRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
@@ -14,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class LoginState extends State implements StatePage{
+    AllPlayerTextUpdater allPlayerTextUpdater;
 
     public LoginState(ClientConfig config, StateManager stateManager, Client client){
         super(config, stateManager, client);
@@ -47,7 +50,15 @@ public class LoginState extends State implements StatePage{
                 LoginRequest loginRequest = new LoginRequest(usernameField.getText(), passwordField.getText());
                 try {
                     client.sendRequest(loginRequest);
-                } catch (IOException ex) {
+                    Thread.sleep(300);
+                    client.sendRequest(new GetSignedPlayerUsernameRequest(client.getToken()));
+                    Thread.sleep(300);
+                    if (allPlayerTextUpdater != null){
+                        allPlayerTextUpdater.stop();
+                    }
+                    allPlayerTextUpdater = new AllPlayerTextUpdater(client);
+                    allPlayerTextUpdater.start();
+                } catch (IOException | InterruptedException ex) {
                     ex.printStackTrace();
                 }
             }
