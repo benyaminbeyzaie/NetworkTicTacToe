@@ -8,22 +8,25 @@ import network.response.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientReader extends Thread {
     private Scanner scanner;
     private ObjectMapper objectMapper;
     private Client client;
-    ClientReader(DataInputStream dataInputStream, Client client){
+
+    ClientReader(DataInputStream dataInputStream, Client client) {
         scanner = new Scanner(dataInputStream);
         this.client = client;
         this.objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
+
     @Override
     public void run() {
         super.run();
-        while (!interrupted()){
+        while (!interrupted()) {
             try {
                 executeResponse(scanner.nextLine());
                 Thread.sleep(200);
@@ -34,29 +37,56 @@ public class ClientReader extends Thread {
     }
 
     private void executeResponse(String jsonResponse) throws IOException {
-        System.out.println("Response: " + jsonResponse );
+        System.out.println("Response: " + jsonResponse);
         Response response = objectMapper.readValue(jsonResponse, Response.class);
-        if (response.getType().equals("SignUp")){
+        if (response.getType().equals("SignUp")) {
             SignUpResponse signUpResponse = objectMapper.readValue(jsonResponse, SignUpResponse.class);
             client.getStateManager().getStateContainer().getSignUpState().showDialogBox(signUpResponse.getStatus());
         }
-        if (response.getType().equals("Login")){
+        if (response.getType().equals("Login")) {
             LoginResponse loginResponse = objectMapper.readValue(jsonResponse, LoginResponse.class);
             client.getStateManager().getStateContainer().getLoginState().showDialogBox(loginResponse.getStatus());
         }
-        if (response.getType().equals("Username")){
-            GetSignedPlayerUsernameResponse  getSignedPlayerUsernameResponse = objectMapper.readValue(jsonResponse, GetSignedPlayerUsernameResponse.class);
+        if (response.getType().equals("Username")) {
+            GetSignedPlayerUsernameResponse getSignedPlayerUsernameResponse = objectMapper.readValue(jsonResponse, GetSignedPlayerUsernameResponse.class);
             client.getStateManager().getStateContainer().getMenuState().getUsernameLabel().setText(getSignedPlayerUsernameResponse.getUsername());
         }
-        if (response.getType().equals("AllPlayer")){
+        if (response.getType().equals("AllPlayer")) {
             GetAllPlayerResponse getAllPlayerResponse = objectMapper.readValue(jsonResponse, GetAllPlayerResponse.class);
             String[] names = getAllPlayerResponse.getAllPlayersByDash().split("/");
             StringBuilder namesInTextArea = new StringBuilder();
-            for (String name : names) {
+            String[] sortedName = sortNames(names);
+            for (String name : sortedName) {
                 namesInTextArea.append(name);
                 namesInTextArea.append("\n");
             }
             client.getStateManager().getStateContainer().getMenuState().getTextArea().setText(namesInTextArea.toString());
         }
+    }
+
+    private String[] sortNames(String[] names) {
+        Map<Integer, Integer> indexToScore = new TreeMap<>();
+        for (int i = 0; i < names.length; i++) {
+            int begin = names[0].length() - 1;
+            while (names[i].charAt(begin) >= '0' && names[i].charAt(begin) <= '9') {
+                begin--;
+            }
+            indexToScore.put(i, Integer.parseInt(names[i].substring(begin + 1)));
+            indexToScore = sortByValue(indexToScore);
+        }
+        int i = names.length - 1;
+        String[] sorted = new String[names.length];
+        for (Map.Entry<Integer, Integer> entry : indexToScore.entrySet()) {
+            sorted[i] = names[entry.getKey()];
+            i--;
+        }
+        return sorted;
+    }
+
+    private Map<Integer, Integer> sortByValue(final Map<Integer, Integer> wordCounts) {
+        return wordCounts.entrySet()
+                .stream()
+                .sorted((Map.Entry.<Integer, Integer>comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 }
