@@ -1,7 +1,6 @@
 package view.state;
 
 import network.client.Client;
-import network.request.GetSignedPlayerUsernameRequest;
 import network.request.LogOutRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
@@ -16,6 +15,7 @@ import java.io.IOException;
 public class MenuState extends State implements StatePage {
     JLabel usernameLabel;
     JTextArea textArea;
+
     public MenuState(ClientConfig clientConfig, StateManager stateManager, Client client) throws IOException {
         super(clientConfig, stateManager,client);
         setLayout(null);
@@ -60,10 +60,6 @@ public class MenuState extends State implements StatePage {
             public void actionPerformed(ActionEvent e) {
                 try {
                     client.sendRequest(new LogOutRequest(client.getToken()));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                try {
                     stateManager.setCurrentState(stateManager.getStateContainer().getLoginState());
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -119,11 +115,15 @@ public class MenuState extends State implements StatePage {
 
     }
 
-    public void setSignedPlayerInfo() throws IOException {
-        usernameLabel.setText(client.sendRequest(new GetSignedPlayerUsernameRequest(client.getToken())));
-    }
-
     public JTextArea getTextArea() {
         return textArea;
+    }
+
+    public JLabel getUsernameLabel() {
+        return usernameLabel;
+    }
+
+    public void setUsernameLabel(JLabel usernameLabel) {
+        this.usernameLabel = usernameLabel;
     }
 }
