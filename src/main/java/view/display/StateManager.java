@@ -15,7 +15,6 @@ public class StateManager {
     }
 
     public void setCurrentState(State currentState) throws IOException {
-        if (currentState instanceof MenuState) ((MenuState) currentState).setSignedPlayerInfo();
         display.setContentPane(currentState);
         display.revalidate();
     }
