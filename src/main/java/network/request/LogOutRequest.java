@@ -4,7 +4,7 @@ public class LogOutRequest extends AuthRequest {
     public LogOutRequest(){}
 
     public LogOutRequest(String token) {
-        super("LogOutRequest", token);
+        super("LogOut", token);
     }
 
     @Override
