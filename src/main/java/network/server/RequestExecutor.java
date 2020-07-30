@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.player.Player;
-import network.request.LoginRequest;
-import network.request.Request;
-import network.request.SignUpRequest;
+import network.request.*;
+import network.response.GetAllPlayerResponse;
+import network.response.GetSignedPlayerUsernameResponse;
 import network.response.LoginResponse;
 import network.response.SignUpResponse;
 import view.constants.Path;
@@ -38,6 +38,49 @@ public class RequestExecutor {
             LoginRequest loginRequest = objectMapper.readValue(jsonRequest, LoginRequest.class);
             login(loginRequest);
         }
+        if (request.getType().equals("Username")){
+            GetSignedPlayerUsernameRequest getSignedPlayerUsernameRequest = objectMapper.readValue(jsonRequest, GetSignedPlayerUsernameRequest.class);
+            username(getSignedPlayerUsernameRequest);
+        }
+        if (request.getType().equals("AllPlayer")){
+            GetAllPlayerRequest getAllPlayerRequest = objectMapper.readValue(jsonRequest, GetAllPlayerRequest.class);
+            allPlayer(getAllPlayerRequest);
+        }
+        if (request.getType().equals("LogOut")){
+            LogOutRequest logOutRequest = objectMapper.readValue(jsonRequest, LogOutRequest.class);
+            logOut(logOutRequest);
+        }
+    }
+
+    private void logOut(LogOutRequest logOutRequest) {
+        if (logOutRequest.getToken().equals(clientHandler.getToken())){
+            clientHandler.getSignedPlayer().setStatus(0);
+            clientHandler.setSignedPlayer(null);
+        }
+    }
+
+    private void allPlayer(GetAllPlayerRequest getAllPlayerRequest) {
+        if (getAllPlayerRequest.getToken().equals(clientHandler.getToken())){
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Player player :
+                 server.getAllPlayers()) {
+                String status = (player.getStatus() == 1) ? "online" : "offline";
+                stringBuilder.append(player.getUsername());
+                stringBuilder.append(": ");
+                stringBuilder.append(status);
+                stringBuilder.append(": ");
+                stringBuilder.append(player.getScore());
+                stringBuilder.append("/");
+            }
+            GetAllPlayerResponse getAllPlayerResponse = new GetAllPlayerResponse(stringBuilder.toString());
+            serverWriter.writeResponse(getAllPlayerResponse);
+        }
+    }
+
+    private void username(GetSignedPlayerUsernameRequest getSignedPlayerUsernameRequest) {
+        if (getSignedPlayerUsernameRequest.getToken().equals(clientHandler.getToken())){
+            serverWriter.writeResponse(new GetSignedPlayerUsernameResponse(clientHandler.getSignedPlayer().getUsername()));
+        }
     }
 
     private void login(LoginRequest loginRequest) throws IOException {
@@ -66,7 +109,12 @@ public class RequestExecutor {
                     if (loginRequest.getPassword().equals(playerToSign.getPassword())){
                         String token = TokenCreator.generateNewToken();
                         clientHandler.setToken(token);
-                        clientHandler.setSignedPlayer(playerToSign);
+                        for (int i = 0; i < server.getAllPlayers().size(); i++) {
+                            if (server.getAllPlayers().get(i).getUsername().equals(playerToSign.getUsername())){
+                                clientHandler.setSignedPlayer(server.getAllPlayers().get(i));
+                                break;
+                            }
+                        }
                         LoginResponse loginResponse = new LoginResponse(token);
                         serverWriter.writeResponse(loginResponse);
                     }else {
