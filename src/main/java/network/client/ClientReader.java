@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import network.request.GetSignedPlayerUsernameRequest;
-import network.response.GetSignedPlayerUsernameResponse;
-import network.response.LoginResponse;
-import network.response.Response;
-import network.response.SignUpResponse;
+import network.response.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -50,6 +47,16 @@ public class ClientReader extends Thread {
         if (response.getType().equals("Username")){
             GetSignedPlayerUsernameResponse  getSignedPlayerUsernameResponse = objectMapper.readValue(jsonResponse, GetSignedPlayerUsernameResponse.class);
             client.getStateManager().getStateContainer().getMenuState().getUsernameLabel().setText(getSignedPlayerUsernameResponse.getUsername());
+        }
+        if (response.getType().equals("AllPlayer")){
+            GetAllPlayerResponse getAllPlayerResponse = objectMapper.readValue(jsonResponse, GetAllPlayerResponse.class);
+            String[] names = getAllPlayerResponse.getAllPlayersByDash().split("/");
+            StringBuilder namesInTextArea = new StringBuilder();
+            for (String name : names) {
+                namesInTextArea.append(name);
+                namesInTextArea.append("\n");
+            }
+            client.getStateManager().getStateContainer().getMenuState().getTextArea().setText(namesInTextArea.toString());
         }
     }
 }
