@@ -1,6 +1,7 @@
 package network.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.game.Game;
 import model.player.Player;
 import network.request.*;
 import view.config.configmodels.ServerConfig;
@@ -21,6 +22,8 @@ public class Server extends Thread{
     private ArrayList<Player> allPlayers;
     private AllPlayerFinder allPlayerFinder;
     private ArrayList<ClientHandler> clientHandlers;
+    private ArrayList<Player> playerInQueue;
+    private Game activeGame;
 
     public Server(ServerConfig config) throws IOException {
         port = config.getPort();
@@ -30,6 +33,7 @@ public class Server extends Thread{
         clientHandlers = new ArrayList<>();
         allPlayerFinder = new AllPlayerFinder(allPlayers);
         playerStatusChecker = new PlayerStatusChecker(clientHandlers, allPlayers);
+        playerInQueue = new ArrayList<>();
     }
 
     @Override
@@ -65,4 +69,18 @@ public class Server extends Thread{
     public ArrayList<Player> getAllPlayers() {
         return allPlayers;
     }
+
+    public ArrayList<Player> getPlayerInQueue() {
+        return playerInQueue;
+    }
+
+    public Game getActiveGame() {
+        return activeGame;
+    }
+
+    public void setActiveGame(Game activeGame) {
+        this.activeGame = activeGame;
+    }
+
+
 }
