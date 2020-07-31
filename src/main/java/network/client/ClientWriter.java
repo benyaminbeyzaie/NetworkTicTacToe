@@ -12,6 +12,11 @@ class ClientWriter {
         printStream = new PrintStream(dataOutputStream);
     }
     void sendRequest(Request request) throws IOException {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         printStream.println(request.toString());
         printStream.flush();
         System.out.println("Request: " + request + " is send via output stream");
