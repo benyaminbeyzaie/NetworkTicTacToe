@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import network.request.GetSignedPlayerUsernameRequest;
 import network.response.*;
+import network.server.GameCreator;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -62,12 +63,27 @@ public class ClientReader extends Thread {
             }
             client.getStateManager().getStateContainer().getMenuState().getTextArea().setText(namesInTextArea.toString());
         }
+        if (response.getType().equals("NewGame")){
+            NewGameResponse newGameResponse = objectMapper.readValue(jsonResponse, NewGameResponse.class);
+            client.getStateManager().getStateContainer().getMenuState().setVisibility(false);
+            if (newGameResponse.getResult() == 0) {
+                // a active game  here
+            }
+            if (newGameResponse.getResult() == 1){
+                // player is in queue start a new thread
+                client.getStateManager().getStateContainer().getMenuState().setVisibility(false);
+            }
+            if (newGameResponse.getResult() == 2){
+                // start a game
+                client.getStateManager().setCurrentState(client.getStateManager().getStateContainer().getGameState());
+            }
+        }
     }
 
     private String[] sortNames(String[] names) {
         Map<Integer, Integer> indexToScore = new TreeMap<>();
         for (int i = 0; i < names.length; i++) {
-            int begin = names[0].length() - 1;
+            int begin = names[i].length() - 1;
             while (names[i].charAt(begin) >= '0' && names[i].charAt(begin) <= '9') {
                 begin--;
             }
