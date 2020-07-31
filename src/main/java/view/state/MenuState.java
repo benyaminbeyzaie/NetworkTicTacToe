@@ -2,6 +2,7 @@ package view.state;
 
 import network.client.Client;
 import network.request.LogOutRequest;
+import network.request.NewGameRequest;
 import view.config.configmodels.ClientConfig;
 import view.constants.Fonts;
 import view.display.StateManager;
@@ -15,6 +16,9 @@ import java.io.IOException;
 public class MenuState extends State implements StatePage {
     JLabel usernameLabel;
     JTextArea textArea;
+    JButton exitButton;
+    JButton logOutButton;
+    JButton startNewGameButton;
 
     public MenuState(ClientConfig clientConfig, StateManager stateManager, Client client) throws IOException {
         super(clientConfig, stateManager,client);
@@ -32,23 +36,27 @@ public class MenuState extends State implements StatePage {
         add(scrollPane);
 
 
-        JButton backButton = new JButton();
-        backButton.setBorder(null);
-        backButton.setText("BACK");
-        backButton.setFocusable(false);
-        backButton.setForeground(Color.white);
-        backButton.setBackground(Color.orange);
-        backButton.setBounds(15 , 10 , 100 , 30);
 
-        JButton startNewGameButton = new JButton();
+        startNewGameButton = new JButton();
         startNewGameButton.setBorder(null);
         startNewGameButton.setText("START A NEW GAME");
         startNewGameButton.setFocusable(false);
         startNewGameButton.setForeground(Color.BLACK);
         startNewGameButton.setBackground(Color.GREEN);
         startNewGameButton.setBounds(35 , 80 , 250 , 80);
+        startNewGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NewGameRequest request = new NewGameRequest(client.getToken());
+                try {
+                    client.sendRequest(request);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
-        JButton logOutButton = new JButton();
+        logOutButton = new JButton();
         logOutButton.setBorder(null);
         logOutButton.setText("LOG OUT");
         logOutButton.setFocusable(false);
@@ -68,7 +76,7 @@ public class MenuState extends State implements StatePage {
             }
         });
 
-        JButton exitButton = new JButton();
+        exitButton = new JButton();
         exitButton.setBorder(null);
         exitButton.setText("EXIT");
         exitButton.setFocusable(false);
@@ -97,8 +105,11 @@ public class MenuState extends State implements StatePage {
 
     }
 
-    private void setTopPlayersLists() {
-
+    public void setVisibility(boolean b){
+     startNewGameButton.setVisible(b);
+     logOutButton.setVisible(b);
+     exitButton.setVisible(b);
+     usernameLabel.setText("Waiting for player... ");
     }
 
     @Override
