@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class LoginState extends State implements StatePage{
-    AllPlayerTextUpdater allPlayerTextUpdater;
 
     public LoginState(ClientConfig config, StateManager stateManager, Client client){
         super(config, stateManager, client);
@@ -51,13 +50,6 @@ public class LoginState extends State implements StatePage{
                 try {
                     client.sendRequest(loginRequest);
                     Thread.sleep(300);
-                    client.sendRequest(new GetSignedPlayerUsernameRequest(client.getToken()));
-                    Thread.sleep(300);
-                    if (allPlayerTextUpdater != null){
-                        allPlayerTextUpdater.stop();
-                    }
-                    allPlayerTextUpdater = new AllPlayerTextUpdater(client);
-                    allPlayerTextUpdater.start();
                 } catch (IOException | InterruptedException ex) {
                     ex.printStackTrace();
                 }
